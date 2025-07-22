@@ -1,0 +1,2319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo - Telecimento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Vídeo de Fundo */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.2;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.8) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #FFD700;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .tele {
+            color: #ffffff;
+        }
+
+        .cimento {
+            color: #cccccc;
+        }
+
+        .admin-indicator {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Login Form */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 2rem;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-title {
+            color: #FFD700;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+        }
+
+        .login-input::placeholder {
+            color: #888;
+        }
+
+        .login-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .login-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-height: 48px;
+            justify-content: center;
+            text-decoration: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .login-btn:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-btn:not(:disabled):active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-btn.primary {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+        }
+
+        .login-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Dashboard Principal */
+        .dashboard {
+            padding: 2rem 0;
+            display: none;
+        }
+
+        .panel-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #FFD700;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        /* Password Management Section */
+        .password-management {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .password-management-title {
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .password-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .password-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #FFD700;
+        }
+
+        .password-input::placeholder {
+            color: #888;
+        }
+
+        .password-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .password-btn.add {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .password-btn.remove {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            color: white;
+        }
+
+        .password-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .password-list {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .password-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .password-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .password-text {
+            color: #cccccc;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .password-text.master {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .password-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .password-action-btn {
+            padding: 0.3rem 0.6rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-action-btn.delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .password-action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .password-action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #FFD700;
+            transform: translateY(-3px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Sections Grid */
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-card-title {
+            color: #FFD700;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-content {
+            color: #cccccc;
+        }
+
+        .section-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-item:last-child {
+            border-bottom: none;
+        }
+
+        .section-item-label {
+            color: #cccccc;
+        }
+
+        .section-item-value {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        /* Sector Stats */
+        .sector-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sector-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .sector-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sector-title {
+            color: #FFD700;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .sector-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sector-metric:last-child {
+            border-bottom: none;
+        }
+
+        .sector-metric-label {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
+
+        .sector-metric-value {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        /* Opinions Section */
+        .opinions-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .opinions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .opinions-title {
+            color: #FFD700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #cccccc;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #FFD700;
+            color: #000;
+            border-color: #FFD700;
+        }
+
+        .opinions-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #888;
+            padding: 3rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        /* Control Section */
+        .control-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-title {
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .control-description {
+            color: #cccccc;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .control-btn.refresh {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+        }
+
+        .control-btn.reset-timer {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+        }
+
+        .control-btn.reset-all {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+        }
+
+        .control-btn.download {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            color: white;
+        }
+
+        .control-btn.export {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+            color: white;
+        }
+
+        .control-btn.logout {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .sector-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .logo-text {
+                font-size: 1.8rem;
+            }
+
+            .admin-indicator {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+
+            .dashboard {
+                padding: 1rem 0;
+            }
+
+            .panel-title {
+                font-size: 2rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .sector-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .control-btn {
+                width: 100%;
+                max-width: 300px;
+                min-width: auto;
+                padding: 1rem 1.5rem;
+            }
+
+            .opinions-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+                gap: 0.3rem;
+            }
+
+            .filter-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+
+            .login-form {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .login-buttons {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .login-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1.2rem 2rem;
+                font-size: 1rem;
+                min-height: 52px;
+            }
+
+            .login-input {
+                padding: 1.2rem;
+                font-size: 1rem;
+                min-height: 52px;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .password-form {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .password-input {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .password-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem 1.5rem;
+            }
+
+            .password-management {
+                padding: 1.5rem;
+            }
+
+            .password-management-title {
+                font-size: 1.3rem;
+            }
+
+            .section-card {
+                padding: 1.2rem;
+            }
+
+            .sector-card {
+                padding: 1.2rem;
+            }
+
+            .opinions-section {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .header {
+                padding: 0.8rem 0;
+            }
+
+            .logo-text {
+                font-size: 1.5rem;
+            }
+
+            .admin-indicator {
+                font-size: 0.8rem;
+                padding: 8px 16px;
+            }
+
+            .panel-title {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+
+            .stat-card {
+                padding: 1.2rem;
+            }
+
+            .stat-value {
+                font-size: 1.8rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .login-form {
+                padding: 1.5rem 1rem;
+                margin: 0.5rem;
+            }
+
+            .login-title {
+                font-size: 1.3rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .login-input {
+                padding: 1rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+
+            .login-btn {
+                padding: 1rem 1.5rem;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+
+            .password-management {
+                padding: 1rem;
+            }
+
+            .password-management-title {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            .password-input {
+                padding: 0.9rem;
+                font-size: 0.9rem;
+            }
+
+            .password-btn {
+                padding: 0.9rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .control-section {
+                padding: 1.5rem;
+            }
+
+            .control-title {
+                font-size: 1.3rem;
+            }
+
+            .control-description {
+                font-size: 0.9rem;
+            }
+
+            .control-btn {
+                padding: 0.9rem 1.2rem;
+                font-size: 0.9rem;
+                min-width: auto;
+            }
+
+            .section-card {
+                padding: 1rem;
+            }
+
+            .section-card-title {
+                font-size: 1.1rem;
+            }
+
+            .sector-card {
+                padding: 1rem;
+            }
+
+            .sector-title {
+                font-size: 1.1rem;
+            }
+
+            .opinions-section {
+                padding: 1rem;
+            }
+
+            .opinions-title {
+                font-size: 1.3rem;
+            }
+
+            .filter-btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Melhorias para tablets */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            .login-container {
+                padding: 3rem 2rem;
+            }
+
+            .login-form {
+                max-width: 500px;
+                padding: 3rem 2.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .control-buttons {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .password-form {
+                flex-direction: row;
+                align-items: flex-end;
+            }
+
+            .password-input {
+                flex: 1;
+                min-width: 250px;
+            }
+        }
+
+        /* Melhorias para telas grandes */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1400px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .sections-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sector-stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Vídeo de Fundo -->
+    <div class="video-background">
+        <video autoplay muted loop>
+            <source src="background-video.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo-text">
+                    <span class="tele">Tele</span><span class="cimento">CIMENTO</span>
+                </h1>
+                <div class="admin-indicator">
+                    <i class="fas fa-shield-alt"></i>
+                    Painel Administrativo
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Form -->
+    <div id="loginForm" class="login-container">
+        <div class="login-form">
+            <h2 class="login-title">
+                <i class="fas fa-lock"></i>
+                Acesso Administrativo
+            </h2>
+            <input 
+                type="password" 
+                id="passwordInput" 
+                class="login-input" 
+                placeholder="Digite a senha"
+                autocomplete="current-password"
+            >
+            <div class="login-buttons">
+                <button class="login-btn primary" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar
+                </button>
+                <button class="login-btn secondary" id="cancelBtn">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Principal -->
+    <div id="dashboard" class="dashboard">
+        <div class="container">
+            <h1 class="panel-title">Dashboard de Avaliações</h1>
+
+            <!-- Password Management Section -->
+            <div class="password-management">
+                <h2 class="password-management-title">
+                    <i class="fas fa-key"></i>
+                    Gerenciamento de Senhas
+                </h2>
+                
+                <div class="password-form">
+                    <input 
+                        type="password" 
+                        id="newPasswordInput" 
+                        class="password-input" 
+                        placeholder="Digite uma nova senha"
+                    >
+                    <button class="password-btn add" id="addPasswordBtn">
+                        <i class="fas fa-plus"></i>
+                        Adicionar Senha
+                    </button>
+                </div>
+
+                <div class="password-list" id="passwordList">
+                    <!-- Senhas serão listadas aqui -->
+                </div>
+            </div>
+
+            <!-- Control Section -->
+            <div class="control-section">
+                <h2 class="control-title">
+                    <i class="fas fa-cogs"></i>
+                    Controles Administrativos
+                </h2>
+                <p class="control-description">
+                    Dashboard em tempo real das avaliações dos clientes. Os dados são atualizados automaticamente conforme novas avaliações são enviadas.
+                </p>
+                <div class="control-buttons">
+                    <button class="control-btn refresh" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar Dados
+                    </button>
+                    <button class="control-btn reset-timer" id="resetTimerBtn">
+                        <i class="fas fa-clock"></i>
+                        Resetar Timer
+                    </button>
+                    <button class="control-btn reset-all" id="resetAllBtn">
+                        <i class="fas fa-trash-alt"></i>
+                        Resetar Tudo
+                    </button>
+                    <button class="control-btn download" id="downloadBtn">
+                        <i class="fas fa-download"></i>
+                        Baixar CSV
+                    </button>
+                    <button class="control-btn export" id="exportBtn">
+                        <i class="fas fa-file-export"></i>
+                        Exportar JSON
+                    </button>
+                    <button class="control-btn logout" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sair
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalVotes">0</div>
+                    <div class="stat-label">Total de Votos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayVotes">0</div>
+                    <div class="stat-label">Votos Hoje</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="averageRating">0.0</div>
+                    <div class="stat-label">Média Geral</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="satisfactionRate">0%</div>
+                    <div class="stat-label">Taxa de Satisfação</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="feedbackCount">0</div>
+                    <div class="stat-label">Feedbacks Recebidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayEvaluations">0</div>
+                    <div class="stat-label">Avaliações Hoje</div>
+                </div>
+            </div>
+
+            <!-- Sections Grid -->
+            <div class="sections-grid">
+                <!-- General Summary -->
+                <div class="section-card">
+                    <h3 class="section-card-title">
+                        <i class="fas fa-chart-pie"></i>
+                        Resumo Geral
+                    </h3>
+                    <div class="section-content">
+                        <div class="section-item">
+                            <span class="section-item-label">Avaliações Positivas:</span>
+                            <span class="section-item-value" id="positiveRate">0%</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-item-label">Avaliações Negativas:</span>
+                            <span class="section-item-value" id="negativeRate">0%</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-item-label">Melhor Setor:</span>
+                            <span class="section-item-value" id="bestSector">Aguardando dados</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-item-label">Setor a Melhorar:</span>
+                            <span class="section-item-value" id="worstSector">Aguardando dados</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temporal Analysis -->
+                <div class="section-card">
+                    <h3 class="section-card-title">
+                        <i class="fas fa-clock"></i>
+                        Análise Temporal
+                    </h3>
+                    <div class="section-content">
+                        <div class="section-item">
+                            <span class="section-item-label">Primeira Avaliação:</span>
+                            <span class="section-item-value" id="firstEvaluation">Aguardando dados</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-item-label">Última Avaliação:</span>
+                            <span class="section-item-value" id="lastEvaluation">Aguardando dados</span>
+                        </div>
+                        <div class="section-item">
+                            <span class="section-item-label">Período Ativo:</span>
+                            <span class="section-item-value" id="activePeriod">0 dias</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sector Statistics -->
+            <div class="sector-stats">
+                <div class="sector-card">
+                    <div class="sector-header">
+                        <span>🛒</span>
+                        <h3 class="sector-title">Setor de Vendas</h3>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Média de Avaliação:</span>
+                        <span class="sector-metric-value" id="salesAverage">0.0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Total de Avaliações:</span>
+                        <span class="sector-metric-value" id="salesTotal">0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Satisfação:</span>
+                        <span class="sector-metric-value" id="salesSatisfaction">0%</span>
+                    </div>
+                </div>
+
+                <div class="sector-card">
+                    <div class="sector-header">
+                        <span>💰</span>
+                        <h3 class="sector-title">Caixa</h3>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Média de Avaliação:</span>
+                        <span class="sector-metric-value" id="cashierAverage">0.0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Total de Avaliações:</span>
+                        <span class="sector-metric-value" id="cashierTotal">0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Satisfação:</span>
+                        <span class="sector-metric-value" id="cashierSatisfaction">0%</span>
+                    </div>
+                </div>
+
+                <div class="sector-card">
+                    <div class="sector-header">
+                        <span>📦</span>
+                        <h3 class="sector-title">Setor de Expedição</h3>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Média de Avaliação:</span>
+                        <span class="sector-metric-value" id="shippingAverage">0.0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Total de Avaliações:</span>
+                        <span class="sector-metric-value" id="shippingTotal">0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Satisfação:</span>
+                        <span class="sector-metric-value" id="shippingSatisfaction">0%</span>
+                    </div>
+                </div>
+
+                <div class="sector-card">
+                    <div class="sector-header">
+                        <span>🚛</span>
+                        <h3 class="sector-title">Setor de Logística</h3>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Média de Avaliação:</span>
+                        <span class="sector-metric-value" id="logisticsAverage">0.0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Total de Avaliações:</span>
+                        <span class="sector-metric-value" id="logisticsTotal">0</span>
+                    </div>
+                    <div class="sector-metric">
+                        <span class="sector-metric-label">Satisfação:</span>
+                        <span class="sector-metric-value" id="logisticsSatisfaction">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opinions Section -->
+            <div class="opinions-section">
+                <div class="opinions-header">
+                    <h3 class="opinions-title">
+                        <i class="fas fa-comments"></i>
+                        Opiniões dos Clientes
+                    </h3>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">Todas (<span id="allCount">0</span>)</button>
+                        <button class="filter-btn" data-filter="positive">Positivas (<span id="positiveCount">0</span>)</button>
+                        <button class="filter-btn" data-filter="negative">Negativas (<span id="negativeCount">0</span>)</button>
+                        <button class="filter-btn" data-filter="suggestions">Sugestões (<span id="suggestionsCount">0</span>)</button>
+                    </div>
+                </div>
+                <div class="opinions-container" id="opinionsContainer">
+                    <div class="empty-state">
+                        <i class="fas fa-comments"></i>
+                        <div>Nenhuma opinião registrada ainda</div>
+                        <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #666;">
+                            As opiniões dos clientes aparecerão aqui conforme forem enviadas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// Dashboard Administrativo TeleCIMENTO - Versão Corrigida para Hospedagem
+class DashboardAdmin {
+    constructor() {
+        this.masterPassword = '@TELEcimento2025';
+        this.isAuthenticated = false;
+        this.dados = null;
+        this.currentFilter = 'all';
+        this.autoUpdateInterval = null;
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.checkAuthentication();
+        this.initializePasswords();
+    }
+
+    initializePasswords() {
+        // Inicializar com a senha principal se não existir
+        const passwords = this.getPasswords();
+        if (!passwords.includes(this.masterPassword)) {
+            passwords.push(this.masterPassword);
+            this.savePasswords(passwords);
+        }
+    }
+
+    getPasswords() {
+        try {
+            return JSON.parse(localStorage.getItem('telecimento_admin_passwords') || '[]');
+        } catch {
+            return [];
+        }
+    }
+
+    savePasswords(passwords) {
+        localStorage.setItem('telecimento_admin_passwords', JSON.stringify(passwords));
+    }
+
+    setupEventListeners() {
+        // Login
+        this.bindEvent('loginBtn', 'click', (e) => {
+            e.preventDefault();
+            this.authenticate();
+        });
+
+        this.bindEvent('cancelBtn', 'click', (e) => {
+            e.preventDefault();
+            this.navigateToIndex();
+        });
+
+        // Enter key no campo de senha
+        this.bindEvent('passwordInput', 'keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.authenticate();
+            }
+        });
+
+        // Gerenciamento de senhas
+        this.bindEvent('addPasswordBtn', 'click', (e) => {
+            e.preventDefault();
+            this.addPassword();
+        });
+
+        this.bindEvent('newPasswordInput', 'keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.addPassword();
+            }
+        });
+
+        // Controles administrativos
+        this.bindEvent('refreshBtn', 'click', (e) => {
+            e.preventDefault();
+            this.refreshData();
+        });
+
+        this.bindEvent('resetTimerBtn', 'click', (e) => {
+            e.preventDefault();
+            this.resetTimer();
+        });
+
+        this.bindEvent('resetAllBtn', 'click', (e) => {
+            e.preventDefault();
+            this.resetAllData();
+        });
+
+        this.bindEvent('downloadBtn', 'click', (e) => {
+            e.preventDefault();
+            this.downloadCSV();
+        });
+
+        this.bindEvent('exportBtn', 'click', (e) => {
+            e.preventDefault();
+            this.exportJSON();
+        });
+
+        this.bindEvent('logoutBtn', 'click', (e) => {
+            e.preventDefault();
+            this.logout();
+        });
+
+        // Filtros de opinião
+        this.setupFilterButtons();
+    }
+
+    bindEvent(elementId, event, handler) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener(event, handler);
+        }
+    }
+
+    setupFilterButtons() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const filter = btn.getAttribute('data-filter');
+                this.setActiveFilter(filter);
+                this.filterOpinions(filter);
+            });
+        });
+    }
+
+    setActiveFilter(filter) {
+        this.currentFilter = filter;
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-filter') === filter) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    navigateToIndex() {
+        try {
+            // Tentar diferentes métodos de navegação
+            if (window.history && window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Tentar navegar para index.html
+                const currentUrl = window.location.href;
+                const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+                window.location.href = baseUrl + 'index.html';
+            }
+        } catch (error) {
+            console.error('Erro na navegação:', error);
+            this.showError('Erro ao navegar. Tente fechar esta aba e abrir o index.html');
+        }
+    }
+
+    checkAuthentication() {
+        const isAuth = sessionStorage.getItem('telecimento_admin_auth');
+        if (isAuth === 'true') {
+            this.isAuthenticated = true;
+            this.showDashboard();
+            this.loadData();
+            this.updatePasswordList();
+            this.startAutoUpdate();
+        } else {
+            this.showLoginForm();
+        }
+    }
+
+    startAutoUpdate() {
+        // Limpar intervalo anterior se existir
+        if (this.autoUpdateInterval) {
+            clearInterval(this.autoUpdateInterval);
+        }
+        
+        // Atualizar dados a cada 30 segundos
+        this.autoUpdateInterval = setInterval(() => {
+            this.loadData();
+        }, 30000);
+    }
+
+    stopAutoUpdate() {
+        if (this.autoUpdateInterval) {
+            clearInterval(this.autoUpdateInterval);
+            this.autoUpdateInterval = null;
+        }
+    }
+
+    async authenticate() {
+        const passwordInput = document.getElementById('passwordInput');
+        const loginBtn = document.getElementById('loginBtn');
+        
+        if (!passwordInput || !loginBtn) {
+            this.showError('Erro: Elementos de login não encontrados');
+            return;
+        }
+
+        const password = passwordInput.value.trim();
+        
+        if (!password) {
+            this.showError('Por favor, digite a senha');
+            passwordInput.focus();
+            return;
+        }
+
+        // Desabilitar botão durante autenticação
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+
+        try {
+            const passwords = this.getPasswords();
+            
+            if (passwords.includes(password)) {
+                this.isAuthenticated = true;
+                sessionStorage.setItem("telecimento_admin_auth", "true");
+                this.showSuccess("Login realizado com sucesso!");
+                
+                setTimeout(() => {
+                    this.showDashboard();
+                    this.loadData();
+                    this.updatePasswordList();
+                    this.startAutoUpdate();
+                }, 1000);
+            } else {
+                this.showError("Senha incorreta! Tente novamente.");
+                
+                // Adicionar efeito de shake no formulário
+                const loginForm = document.querySelector(".login-form");
+                if (loginForm) {
+                    loginForm.style.animation = "shake 0.5s";
+                    setTimeout(() => {
+                        loginForm.style.animation = "";
+                    }, 500);
+                }
+                
+                // Limpar campo de senha
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        } catch (error) {
+            console.error('Erro na autenticação:', error);
+            this.showError('Erro interno. Tente novamente.');
+        }
+
+        // Reabilitar botão
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar';
+    }
+
+    addPassword() {
+        const newPasswordInput = document.getElementById('newPasswordInput');
+        const addPasswordBtn = document.getElementById('addPasswordBtn');
+        
+        if (!newPasswordInput || !addPasswordBtn) return;
+
+        const newPassword = newPasswordInput.value.trim();
+        
+        if (!newPassword) {
+            this.showError('Por favor, digite uma senha');
+            newPasswordInput.focus();
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            this.showError('A senha deve ter pelo menos 6 caracteres');
+            newPasswordInput.focus();
+            return;
+        }
+
+        try {
+            const passwords = this.getPasswords();
+            
+            if (passwords.includes(newPassword)) {
+                this.showError('Esta senha já existe');
+                newPasswordInput.value = '';
+                newPasswordInput.focus();
+                return;
+            }
+
+            // Adicionar nova senha
+            passwords.push(newPassword);
+            this.savePasswords(passwords);
+            
+            // Limpar campo e atualizar lista
+            newPasswordInput.value = '';
+            this.updatePasswordList();
+            this.showSuccess('Senha adicionada com sucesso!');
+        } catch (error) {
+            console.error('Erro ao adicionar senha:', error);
+            this.showError('Erro ao adicionar senha. Tente novamente.');
+        }
+    }
+
+    removePassword(password) {
+        if (password === this.masterPassword) {
+            this.showError('A senha principal não pode ser removida');
+            return;
+        }
+
+        if (!confirm(`Tem certeza que deseja remover a senha "${password}"?`)) {
+            return;
+        }
+
+        try {
+            const passwords = this.getPasswords();
+            const index = passwords.indexOf(password);
+            
+            if (index > -1) {
+                passwords.splice(index, 1);
+                this.savePasswords(passwords);
+                this.updatePasswordList();
+                this.showSuccess('Senha removida com sucesso!');
+            }
+        } catch (error) {
+            console.error('Erro ao remover senha:', error);
+            this.showError('Erro ao remover senha. Tente novamente.');
+        }
+    }
+
+    updatePasswordList() {
+        const passwordList = document.getElementById('passwordList');
+        if (!passwordList) return;
+
+        try {
+            const passwords = this.getPasswords();
+            
+            if (passwords.length === 0) {
+                passwordList.innerHTML = '<div style="text-align: center; color: #888; padding: 1rem;">Nenhuma senha cadastrada</div>';
+                return;
+            }
+
+            passwordList.innerHTML = '';
+            
+            passwords.forEach(password => {
+                const passwordItem = document.createElement('div');
+                passwordItem.className = 'password-item';
+                
+                const isMaster = password === this.masterPassword;
+                
+                passwordItem.innerHTML = `
+                    <div class="password-text ${isMaster ? 'master' : ''}">
+                        ${password} ${isMaster ? '(Principal)' : ''}
+                    </div>
+                    <div class="password-actions">
+                        ${!isMaster ? `
+                            <button class="password-action-btn delete" onclick="dashboard.removePassword('${password}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : `
+                            <button class="password-action-btn delete" disabled title="Senha principal não pode ser removida">
+                                <i class="fas fa-lock"></i>
+                            </button>
+                        `}
+                    </div>
+                `;
+                
+                passwordList.appendChild(passwordItem);
+            });
+        } catch (error) {
+            console.error('Erro ao atualizar lista de senhas:', error);
+            passwordList.innerHTML = '<div style="text-align: center; color: #f44336; padding: 1rem;">Erro ao carregar senhas</div>';
+        }
+    }
+
+    refreshData() {
+        try {
+            this.loadData();
+            this.showSuccess('Dados atualizados com sucesso!');
+        } catch (error) {
+            console.error('Erro ao atualizar dados:', error);
+            this.showError('Erro ao atualizar dados. Tente novamente.');
+        }
+    }
+
+    resetTimer() {
+        if (!confirm('Tem certeza que deseja resetar o timer de votação? Isso permitirá que todos os dispositivos votem novamente.')) {
+            return;
+        }
+
+        try {
+            localStorage.removeItem('telecimento_voted_devices');
+            localStorage.removeItem('telecimento_last_vote_time');
+            this.showSuccess('Timer de votação resetado! Todos os dispositivos podem votar novamente.');
+        } catch (error) {
+            console.error('Erro ao resetar timer:', error);
+            this.showError('Erro ao resetar timer. Tente novamente.');
+        }
+    }
+
+    resetAllData() {
+        if (!confirm('ATENÇÃO: Tem certeza que deseja apagar TODOS os dados? Esta ação não pode ser desfeita!')) {
+            return;
+        }
+
+        if (!confirm('Confirme novamente: Deseja realmente apagar todas as avaliações e dados do sistema?')) {
+            return;
+        }
+
+        try {
+            // Remover todos os dados relacionados às avaliações
+            localStorage.removeItem('telecimento_evaluations');
+            localStorage.removeItem('telecimento_voted_devices');
+            localStorage.removeItem('telecimento_last_vote_time');
+            
+            // Recarregar dados para mostrar estado zerado
+            this.loadData();
+            this.showSuccess('Todos os dados foram removidos com sucesso!');
+        } catch (error) {
+            console.error('Erro ao resetar dados:', error);
+            this.showError('Erro ao resetar dados. Tente novamente.');
+        }
+    }
+
+    downloadCSV() {
+        try {
+            const evaluations = JSON.parse(localStorage.getItem("telecimento_evaluations") || "[]");
+            
+            if (evaluations.length === 0) {
+                this.showError('Não há dados para exportar');
+                return;
+            }
+
+            // Criar cabeçalho CSV
+            const headers = [
+                'Data/Hora',
+                'Avaliação Geral',
+                'Vendas',
+                'Caixa',
+                'Expedição',
+                'Logística',
+                'Feedback'
+            ];
+
+            // Criar linhas CSV
+            const csvRows = [headers.join(',')];
+            
+            evaluations.forEach(evaluation => {
+                const row = [
+                    `"${new Date(evaluation.timestamp).toLocaleString('pt-BR')}"`,
+                    `"${evaluation.avaliacaoGeral || ''}"`,
+                    `"${evaluation.setores?.Vendas || ''}"`,
+                    `"${evaluation.setores?.Caixa || ''}"`,
+                    `"${evaluation.setores?.Expedição || ''}"`,
+                    `"${evaluation.setores?.Logística || ''}"`,
+                    `"${(evaluation.feedback || '').replace(/"/g, '""')}"`
+                ];
+                csvRows.push(row.join(','));
+            });
+
+            // Criar e baixar arquivo
+            const csvContent = csvRows.join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `telecimento_avaliacoes_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.showSuccess('Arquivo CSV baixado com sucesso!');
+            } else {
+                this.showError('Seu navegador não suporta download de arquivos');
+            }
+        } catch (error) {
+            console.error('Erro ao gerar CSV:', error);
+            this.showError('Erro ao gerar arquivo CSV. Tente novamente.');
+        }
+    }
+
+    exportJSON() {
+        try {
+            const evaluations = JSON.parse(localStorage.getItem("telecimento_evaluations") || "[]");
+            
+            if (evaluations.length === 0) {
+                this.showError('Não há dados para exportar');
+                return;
+            }
+
+            // Criar relatório completo
+            const report = {
+                metadata: {
+                    exportDate: new Date().toISOString(),
+                    totalEvaluations: evaluations.length,
+                    version: '1.0'
+                },
+                statistics: this.dados ? this.dados.estatisticas : null,
+                evaluations: evaluations
+            };
+
+            // Criar e baixar arquivo
+            const jsonContent = JSON.stringify(report, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `telecimento_relatorio_${new Date().toISOString().split('T')[0]}.json`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.showSuccess('Relatório JSON exportado com sucesso!');
+            } else {
+                this.showError('Seu navegador não suporta download de arquivos');
+            }
+        } catch (error) {
+            console.error('Erro ao exportar JSON:', error);
+            this.showError('Erro ao exportar relatório. Tente novamente.');
+        }
+    }
+
+    logout() {
+        try {
+            sessionStorage.removeItem('telecimento_admin_auth');
+            this.isAuthenticated = false;
+            this.stopAutoUpdate();
+            this.showSuccess('Logout realizado com sucesso!');
+            
+            setTimeout(() => {
+                this.showLoginForm();
+            }, 1000);
+        } catch (error) {
+            console.error('Erro no logout:', error);
+            this.showError('Erro no logout. Tente novamente.');
+        }
+    }
+
+    showLoginForm() {
+        const loginForm = document.getElementById("loginForm");
+        const dashboard = document.getElementById("dashboard");
+        
+        if (loginForm) loginForm.style.display = "flex";
+        if (dashboard) dashboard.style.display = "none";
+        
+        // Focus no campo de senha
+        const passwordInput = document.getElementById('passwordInput');
+        if (passwordInput) {
+            setTimeout(() => passwordInput.focus(), 100);
+        }
+    }
+
+    showDashboard() {
+        const loginForm = document.getElementById("loginForm");
+        const dashboard = document.getElementById("dashboard");
+        
+        if (loginForm) loginForm.style.display = "none";
+        if (dashboard) dashboard.style.display = "block";
+    }
+
+    loadData() {
+        try {
+            const localEvaluations = JSON.parse(localStorage.getItem("telecimento_evaluations") || "[]");
+            
+            if (localEvaluations.length > 0) {
+                // Se há dados, calcular estatísticas e atualizar dashboard
+                this.dados = {
+                    avaliacoes: localEvaluations,
+                    estatisticas: this.calculateStatistics(localEvaluations)
+                };
+                this.updateDashboard();
+                this.updateOpinions();
+            } else {
+                // Manter dashboard zerado
+                this.keepZeroState();
+            }
+        } catch (error) {
+            console.error("Erro ao carregar dados:", error);
+            this.keepZeroState();
+        }
+    }
+
+    keepZeroState() {
+        // Resetar todos os valores para zero
+        this.updateElement('totalVotes', '0');
+        this.updateElement('todayVotes', '0');
+        this.updateElement('averageRating', '0.0');
+        this.updateElement('satisfactionRate', '0%');
+        this.updateElement('feedbackCount', '0');
+        this.updateElement('todayEvaluations', '0');
+        
+        // Resetar resumo geral
+        this.updateElement('positiveRate', '0%');
+        this.updateElement('negativeRate', '0%');
+        this.updateElement('bestSector', 'Aguardando dados');
+        this.updateElement('worstSector', 'Aguardando dados');
+        
+        // Resetar análise temporal
+        this.updateElement('firstEvaluation', 'Aguardando dados');
+        this.updateElement('lastEvaluation', 'Aguardando dados');
+        this.updateElement('activePeriod', '0 dias');
+        
+        // Resetar setores
+        const sectors = ['sales', 'cashier', 'shipping', 'logistics'];
+        sectors.forEach(sector => {
+            this.updateElement(`${sector}Average`, '0.0');
+            this.updateElement(`${sector}Total`, '0');
+            this.updateElement(`${sector}Satisfaction`, '0%');
+        });
+        
+        // Resetar contadores de filtros
+        this.updateElement('allCount', '0');
+        this.updateElement('positiveCount', '0');
+        this.updateElement('negativeCount', '0');
+        this.updateElement('suggestionsCount', '0');
+        
+        // Mostrar estado vazio nas opiniões
+        const opinionsContainer = document.getElementById('opinionsContainer');
+        if (opinionsContainer) {
+            opinionsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <div>Nenhuma opinião registrada ainda</div>
+                    <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #666;">
+                        As opiniões dos clientes aparecerão aqui conforme forem enviadas
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    updateElement(id, value) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    calculateStatistics(evaluations) {
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+
+        const avaliacoesHoje = evaluations.filter(a => 
+            a.timestamp && new Date(a.timestamp) >= hoje
+        );
+
+        const totalVotos = evaluations.length;
+        const votosHoje = avaliacoesHoje.length;
+
+        // Calcular média geral
+        const valores = { 'Ruim': 1, 'Regular': 2, 'Bom': 3, 'Excelente': 4 };
+        const somaAvaliacoes = evaluations.reduce((soma, a) => soma + (valores[a.avaliacaoGeral] || 0), 0);
+        const mediaGeral = totalVotos > 0 ? (somaAvaliacoes / totalVotos).toFixed(1) : 0;
+
+        // Taxa de satisfação (Bom + Excelente)
+        const satisfeitos = evaluations.filter(a => ['Bom', 'Excelente'].includes(a.avaliacaoGeral)).length;
+        const taxaSatisfacao = totalVotos > 0 ? Math.round((satisfeitos / totalVotos) * 100) : 0;
+
+        // Feedbacks
+        const feedbacks = evaluations.filter(a => a.feedback && a.feedback.trim() !== '').length;
+
+        // Estatísticas por setor
+        const setores = ['Vendas', 'Caixa', 'Expedição', 'Logística'];
+        const estatisticasSetores = {};
+
+        setores.forEach(setor => {
+            const avaliacoesSetor = evaluations.filter(a => a.setores && a.setores[setor]);
+            const totalSetor = avaliacoesSetor.length;
+            
+            if (totalSetor > 0) {
+                const somaSetor = avaliacoesSetor.reduce((soma, a) => soma + (valores[a.setores[setor]] || 0), 0);
+                const mediaSetor = (somaSetor / totalSetor).toFixed(1);
+                const satisfeitosSetor = avaliacoesSetor.filter(a => ['Bom', 'Excelente'].includes(a.setores[setor])).length;
+                const taxaSetor = Math.round((satisfeitosSetor / totalSetor) * 100);
+
+                estatisticasSetores[setor] = {
+                    total: totalSetor,
+                    media: parseFloat(mediaSetor),
+                    satisfacao: taxaSetor
+                };
+            } else {
+                estatisticasSetores[setor] = {
+                    total: 0,
+                    media: 0,
+                    satisfacao: 0
+                };
+            }
+        });
+
+        return {
+            totalVotos,
+            votosHoje,
+            mediaGeral: parseFloat(mediaGeral),
+            taxaSatisfacao,
+            feedbacks,
+            setores: estatisticasSetores
+        };
+    }
+
+    updateDashboard() {
+        if (!this.dados) return;
+
+        const stats = this.dados.estatisticas;
+
+        // Atualizar estatísticas principais
+        this.updateElement('totalVotes', stats.totalVotos.toString());
+        this.updateElement('todayVotes', stats.votosHoje.toString());
+        this.updateElement('averageRating', stats.mediaGeral.toFixed(1));
+        this.updateElement('satisfactionRate', stats.taxaSatisfacao + '%');
+        this.updateElement('feedbackCount', stats.feedbacks.toString());
+        this.updateElement('todayEvaluations', stats.votosHoje.toString());
+
+        // Atualizar resumo geral
+        this.updateGeneralSummary(stats);
+
+        // Atualizar estatísticas por setor
+        this.updateSectorStats(stats.setores);
+
+        // Atualizar análise temporal
+        this.updateTemporalAnalysis();
+    }
+
+    updateGeneralSummary(stats) {
+        const positiveRate = stats.taxaSatisfacao;
+        const negativeRate = 100 - positiveRate;
+
+        this.updateElement('positiveRate', positiveRate + '%');
+        this.updateElement('negativeRate', negativeRate + '%');
+        
+        // Melhor e pior setor
+        const setores = stats.setores;
+        let melhorSetor = 'Aguardando dados';
+        let piorSetor = 'Aguardando dados';
+        let maiorMedia = 0;
+        let menorMedia = 5;
+
+        Object.keys(setores).forEach(setor => {
+            const media = setores[setor].media;
+            if (media > maiorMedia && setores[setor].total > 0) {
+                maiorMedia = media;
+                melhorSetor = setor;
+            }
+            if (media < menorMedia && setores[setor].total > 0) {
+                menorMedia = media;
+                piorSetor = setor;
+            }
+        });
+
+        this.updateElement('bestSector', melhorSetor);
+        this.updateElement('worstSector', piorSetor);
+    }
+
+    updateSectorStats(setores) {
+        const sectorMapping = {
+            'Vendas': 'sales',
+            'Caixa': 'cashier',
+            'Expedição': 'shipping',
+            'Logística': 'logistics'
+        };
+        
+        Object.keys(sectorMapping).forEach(sectorName => {
+            const sectorId = sectorMapping[sectorName];
+            const sectorData = setores[sectorName] || { total: 0, media: 0, satisfacao: 0 };
+            
+            this.updateElement(`${sectorId}Average`, sectorData.media.toFixed(1));
+            this.updateElement(`${sectorId}Total`, sectorData.total.toString());
+            this.updateElement(`${sectorId}Satisfaction`, sectorData.satisfacao + '%');
+        });
+    }
+
+    updateTemporalAnalysis() {
+        if (!this.dados || !this.dados.avaliacoes || this.dados.avaliacoes.length === 0) return;
+
+        const avaliacoes = this.dados.avaliacoes;
+        const timestamps = avaliacoes.map(a => new Date(a.timestamp)).sort((a, b) => a - b);
+        
+        if (timestamps.length > 0) {
+            const primeira = timestamps[0].toLocaleDateString('pt-BR');
+            const ultima = timestamps[timestamps.length - 1].toLocaleDateString('pt-BR');
+            const diasAtivos = Math.ceil((timestamps[timestamps.length - 1] - timestamps[0]) / (1000 * 60 * 60 * 24)) + 1;
+
+            this.updateElement('firstEvaluation', primeira);
+            this.updateElement('lastEvaluation', ultima);
+            this.updateElement('activePeriod', diasAtivos + ' dias');
+        }
+    }
+
+    updateOpinions() {
+        if (!this.dados || !this.dados.avaliacoes) return;
+
+        // Filtrar opiniões com feedback
+        const avaliacoes = this.dados.avaliacoes
+            .filter(a => a.feedback && a.feedback.trim() !== '')
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        // Atualizar contadores dos filtros
+        this.updateFilterCounts(avaliacoes);
+
+        // Aplicar filtro atual
+        this.filterOpinions(this.currentFilter);
+    }
+
+    filterOpinions(filter) {
+        if (!this.dados || !this.dados.avaliacoes) return;
+
+        const opinionsContainer = document.getElementById('opinionsContainer');
+        if (!opinionsContainer) return;
+
+        // Filtrar opiniões com feedback
+        let avaliacoes = this.dados.avaliacoes
+            .filter(a => a.feedback && a.feedback.trim() !== '')
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        // Aplicar filtro específico
+        switch (filter) {
+            case 'positive':
+                avaliacoes = avaliacoes.filter(a => this.analyzeSentiment(a.feedback) === 'Positivo');
+                break;
+            case 'negative':
+                avaliacoes = avaliacoes.filter(a => this.analyzeSentiment(a.feedback) === 'Negativo');
+                break;
+            case 'suggestions':
+                avaliacoes = avaliacoes.filter(a => a.feedback.toLowerCase().includes('sugest'));
+                break;
+            // 'all' não precisa de filtro adicional
+        }
+
+        if (avaliacoes.length === 0) {
+            opinionsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-comments"></i>
+                    <div>Nenhuma opinião encontrada para este filtro</div>
+                </div>
+            `;
+            return;
+        }
+
+        // Limpar container e adicionar opiniões
+        opinionsContainer.innerHTML = '';
+        
+        avaliacoes.forEach(avaliacao => {
+            const opinionCard = this.createOpinionCard(avaliacao);
+            opinionsContainer.appendChild(opinionCard);
+        });
+    }
+
+    createOpinionCard(avaliacao) {
+        const card = document.createElement('div');
+        card.className = 'opinion-card';
+        card.style.cssText = `
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        `;
+        
+        const timestamp = new Date(avaliacao.timestamp).toLocaleString('pt-BR');
+        
+        // Criar lista de setores avaliados
+        const setoresHtml = Object.keys(avaliacao.setores || {})
+            .map(setor => `<span style="background: rgba(255, 215, 0, 0.1); color: #FFD700; padding: 0.25rem 0.5rem; border-radius: 10px; font-size: 0.8rem; border: 1px solid rgba(255, 215, 0, 0.3);">${this.getSectorIcon(setor)} ${setor}: ${avaliacao.setores[setor]}</span>`)
+            .join(' ');
+
+        card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                <span style="padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem; font-weight: 600; background: #4CAF50; color: white;">${this.getRatingEmoji(avaliacao.avaliacaoGeral)} ${avaliacao.avaliacaoGeral}</span>
+                <span style="color: #888; font-size: 0.8rem;">${timestamp}</span>
+            </div>
+            <div style="color: #cccccc; font-style: italic; margin-bottom: 0.75rem; line-height: 1.5;">
+                "${avaliacao.feedback}"
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                ${setoresHtml}
+            </div>
+        `;
+
+        return card;
+    }
+
+    getSectorIcon(setor) {
+        const icons = {
+            'Vendas': '🛒',
+            'Caixa': '💰',
+            'Expedição': '📦',
+            'Logística': '🚛'
+        };
+        return icons[setor] || '📋';
+    }
+
+    getRatingEmoji(rating) {
+        const emojis = {
+            'Ruim': '😞',
+            'Regular': '😐',
+            'Bom': '😊',
+            'Excelente': '🤩'
+        };
+        return emojis[rating] || '😐';
+    }
+
+    updateFilterCounts(avaliacoes) {
+        const counts = {
+            todas: avaliacoes.length,
+            positivas: avaliacoes.filter(a => this.analyzeSentiment(a.feedback) === 'Positivo').length,
+            negativas: avaliacoes.filter(a => this.analyzeSentiment(a.feedback) === 'Negativo').length,
+            sugestoes: avaliacoes.filter(a => a.feedback.toLowerCase().includes('sugest')).length
+        };
+
+        this.updateElement('allCount', counts.todas.toString());
+        this.updateElement('positiveCount', counts.positivas.toString());
+        this.updateElement('negativeCount', counts.negativas.toString());
+        this.updateElement('suggestionsCount', counts.sugestoes.toString());
+    }
+
+    analyzeSentiment(text) {
+        const positiveWords = ['bom', 'ótimo', 'excelente', 'maravilhoso', 'perfeito', 'satisfeito', 'recomendo', 'gostei'];
+        const negativeWords = ['ruim', 'péssimo', 'horrível', 'insatisfeito', 'problema', 'demora', 'não gostei'];
+        
+        const lowerText = text.toLowerCase();
+        const positiveCount = positiveWords.filter(word => lowerText.includes(word)).length;
+        const negativeCount = negativeWords.filter(word => lowerText.includes(word)).length;
+        
+        if (positiveCount > negativeCount) return 'Positivo';
+        if (negativeCount > positiveCount) return 'Negativo';
+        return 'Neutro';
+    }
+
+    showError(message) {
+        this.showNotification(message, 'error');
+    }
+
+    showSuccess(message) {
+        this.showNotification(message, 'success');
+    }
+
+    showMessage(message) {
+        this.showNotification(message, 'success');
+    }
+
+    showNotification(message, type) {
+        // Remover notificação existente
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Criar nova notificação
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+            <span>${message}</span>
+        `;
+
+        document.body.appendChild(notification);
+
+        // Remover após 3 segundos
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+}
+
+// Variável global para acesso aos métodos da classe
+let dashboard;
+
+// Inicializar quando a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    dashboard = new DashboardAdmin();
+});
+
+// Cleanup ao sair da página
+window.addEventListener('beforeunload', () => {
+    if (dashboard) {
+        dashboard.stopAutoUpdate();
+    }
+});
+</script>
+</body>
+</html>
+
+
+
